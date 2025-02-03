@@ -150,11 +150,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Ted data (Health, Energy, etc.)
+    // Ted properties (Health, Energy, etc.)
 
     public void EnterSleepMode()
     {
-        Debug.Log("L'ours s'endort...");
+        Debug.Log("Ted falls asleep...");
     }
 }
 
@@ -200,5 +200,5 @@ void OnDisable()
 
 void HandlePlayerEnterShelter(ShelterType type)
 {
-    Debug.Log($"Notification reçue : le joueur est dans un abri de type {type}");
+    Debug.Log($"Notification received : Ted is in a shelter: {type}");
 }
