@@ -1,5 +1,3 @@
-using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class BearController : MonoBehaviour
@@ -8,45 +6,53 @@ public class BearController : MonoBehaviour
     private Vector3 currentPosition;
     private Vector3 targetPosition;
     [SerializeField] private Camera cam;
+    private CharacterController characterController;
+    private Animator bearAnimator;
     private static readonly int Run = Animator.StringToHash("Run Forward");
     private static readonly int Idle = Animator.StringToHash("Idle");
-    static Vector3 vertical(Vector3 vec){
-        return new Vector3(vec.x,0.0f,vec.y);
-    }
 
-    // Start is called before the first frame update
     void Start()
     {
+        characterController = GetComponent<CharacterController>();
+        bearAnimator = GetComponent<Animator>();
         currentPosition = transform.position;
         targetPosition = currentPosition;
-        transform.rotation = Quaternion.Euler(0,0,0);
     }
-    void Update(){
-        transform.LookAt(targetPosition);
-    }
-    // Update is called once per frame
-    void FixedUpdate(){
-        CharacterController characterController = GetComponent<CharacterController>();
-        Animator bearAnimator = GetComponent<Animator>();
-        currentPosition = transform.position;
-        if(Input.GetMouseButton(0)){
-            RaycastHit hit;
+
+    void FixedUpdate()
+    {
+        if (Input.GetMouseButton(0))
+        {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            
-            if (Physics.Raycast(ray, out hit)) {
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
                 targetPosition = hit.point;
-                // Do something with the object that was hit by the raycast.
             }
         }
-        transform.LookAt(targetPosition);
-        if(Vector3.Distance(vertical(currentPosition),vertical(targetPosition))>2){
+    }
+
+    void Update()
+    {
+        currentPosition = transform.position;
+        Vector3 lookDirection = targetPosition - currentPosition;
+        lookDirection.y = 0; // no rotation on y-axis
+
+        if (lookDirection.magnitude > 0.1f)
+        {
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+        }
+
+        if (Vector3.Distance(currentPosition, targetPosition) > 2)
+        {
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
-            characterController.SimpleMove(Vector3.Normalize(targetPosition-currentPosition) * speed);
+            characterController.Move(Vector3.Normalize(lookDirection) * speed * Time.deltaTime);
         }
-        else{
+        else
+        {
             bearAnimator.SetBool(Run, false);
             bearAnimator.SetBool(Idle, true);
         }
     }
+
 }
