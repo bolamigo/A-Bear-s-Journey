@@ -1,5 +1,3 @@
-using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class BearController : MonoBehaviour
@@ -14,6 +12,10 @@ public class BearController : MonoBehaviour
         return new Vector3(vec.x,0.0f,vec.y);
     }
 
+    private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Query-based naming
+    [SerializeField] private GameObject mapCamera;
+    private bool isMapActive = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,10 +23,19 @@ public class BearController : MonoBehaviour
         targetPosition = currentPosition;
         transform.rotation = Quaternion.Euler(0,0,0);
     }
-    void Update(){
+
+    void Update()
+    {
+        if (Input.GetKeyDown(M_KEY))
+        {
+            isMapActive = !isMapActive;
+            if (mapCamera != null)
+                mapCamera.SetActive(isMapActive);
+        }
     }
-    // Update is called once per frame
+
     void FixedUpdate(){
+        if (isMapActive) return;
         CharacterController characterController = GetComponent<CharacterController>();
         Animator bearAnimator = GetComponent<Animator>();
         currentPosition = transform.position;
