@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4897732326026650923}
   - component: {fileID: 7213863697906979297}
   - component: {fileID: 4423076394172779727}
+  - component: {fileID: 5998963543907703637}
   m_Layer: 0
   m_Name: Bush_Berries
   m_TagString: Untagged
@@ -106,3 +107,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.2223892, y: 2.483419, z: 2.9386978}
   m_Center: {x: -0.0035629272, y: 1.2417095, z: 0.041931152}
+--- !u!114 &5998963543907703637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9159255803884695604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48b218628358424093dfa14259297d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kingdom: 1
+  respawnDelay: 10

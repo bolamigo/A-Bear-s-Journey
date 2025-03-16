@@ -6,7 +6,7 @@ public class Enums : MonoBehaviour
     {
         Mineral,
         Vegetal,
-        Fungus
+        Animal
     }
 
     public enum DietType
@@ -19,7 +19,7 @@ public class Enums : MonoBehaviour
     public enum InteractionType
     {
         Flee,
-        Fly,
+        Fight,
         Freeze
     }
 

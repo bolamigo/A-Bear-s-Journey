@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 using UnityEngine;
 
 public class Creature : WorldEntity
@@ -12,8 +8,7 @@ public class Creature : WorldEntity
 
     private void Start()
     {
-        //kingdoms = data.kingdoms;  
-        position = transform.position; 
+        //kingdom = data.kingdom;
         //interactionStrategy = InteractionStrategyFactory.CreateStrategy(data.defaultInteraction);
     }
 
