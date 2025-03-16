@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
             float newAge = currentAge + 0.1f;
             transform.localScale = Vector3.one * newAge;
             // La cam dezoom moins vite que Ted grandit, ça donne une meilleure impression de taille.
-            float newCameraScale = 1.9f - (newAge * 0.75f);
+            float newCameraScale = 2.2f - newAge;
             if (fixedAnchor != null) fixedAnchor.transform.localScale = Vector3.one * newCameraScale;
         }
     }
