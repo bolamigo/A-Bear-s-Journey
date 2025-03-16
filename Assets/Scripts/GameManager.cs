@@ -3,6 +3,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // Singleton
+
+    [SerializeField] private Transform ted;
+
     public int berryCount = 0;
 
     private void Awake()
@@ -22,6 +25,5 @@ public class GameManager : MonoBehaviour
     {
         berryCount++;
         Debug.Log("Berry eaten! Total : " + berryCount);
-        // TODO : Mise à jour de l'UI, Ted progresse...
     }
 }

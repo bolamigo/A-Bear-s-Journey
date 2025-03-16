@@ -14,6 +14,10 @@ public class BerryBush : Resource
             // Incrémente le compteur de baies via le GameManager
             GameManager.Instance.CollectBerry();
 
+            // Ted grandit
+            PlayerController playerController = other.GetComponent<PlayerController>();
+            playerController?.grow();
+
             // Rend le buisson invisible pour simuler la récolte
             gameObject.GetComponent<Renderer>().enabled = false;
 

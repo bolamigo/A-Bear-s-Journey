@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BearController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 3;
     private Vector3 currentPosition;
@@ -15,6 +15,8 @@ public class BearController : MonoBehaviour
     private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Query-based naming
     [SerializeField] private GameObject mapCamera;
     private bool isMapActive = false;
+
+    [SerializeField] private Transform fixedAnchor;
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +46,6 @@ public class BearController : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit)) {
                 targetPosition = hit.point;
-                // Do something with the object that was hit by the raycast.
             }
         }
         Vector3 horizontal_target = new(targetPosition.x,transform.position.y,targetPosition.z);
@@ -65,6 +66,25 @@ public class BearController : MonoBehaviour
         else{
             bearAnimator.SetBool(Run, false);
             bearAnimator.SetBool(Idle, true);
+        }
+    }
+    public float getAge()
+    {
+        return transform.localScale.x;
+    }
+
+    public void grow()
+    {
+        float currentAge = getAge();
+        float maxAge = 1.2f;
+        if (currentAge >= maxAge) {
+            transform.localScale = Vector3.one * maxAge;
+        } else {
+            float newAge = currentAge + 0.1f;
+            transform.localScale = Vector3.one * newAge;
+            // La cam dezoom moins vite que Ted grandit, ça donne une meilleure impression de taille.
+            float newCameraScale = 1.9f - (newAge * 0.75f);
+            if (fixedAnchor != null) fixedAnchor.transform.localScale = Vector3.one * newCameraScale;
         }
     }
 }

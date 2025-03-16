@@ -12,7 +12,7 @@ public class Shelter : MonoBehaviour
     //event triggered when the player enters a shelter
     public static event Action<ShelterType> OnPlayerEnterShelter;
 
-    //if the bear touches the shelter, it enters on it
+    //if the bear touches the shelter, it enters it
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
