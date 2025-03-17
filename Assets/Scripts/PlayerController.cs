@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     private static readonly int Run = Animator.StringToHash("Run Forward");
     private static readonly int Idle = Animator.StringToHash("Idle");
     static Vector3 horizontal(Vector3 vec){
-        return new Vector3(vec.x,0.0f,vec.y);
+        return new Vector3(vec.x,0.0f,vec.z);
     }
 
     private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Query-based naming
@@ -57,8 +57,7 @@ public class PlayerController : MonoBehaviour
         { 
             transform.LookAt(horizontal_target, ground_hit.normal);
         }
-
-        if(Vector3.Distance(horizontal(currentPosition),horizontal(targetPosition))>2){
+        if(Vector3.Distance(horizontal(currentPosition),horizontal(targetPosition))>1){
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
             characterController.SimpleMove(Vector3.Normalize(targetPosition-currentPosition) * speed);
@@ -82,7 +81,7 @@ public class PlayerController : MonoBehaviour
         } else {
             float newAge = currentAge + 0.1f;
             transform.localScale = Vector3.one * newAge;
-            // La cam dezoom moins vite que Ted grandit, ça donne une meilleure impression de taille.
+            // La cam dezoom moins vite que Ted grandit, ï¿½a donne une meilleure impression de taille.
             float newCameraScale = 2.2f - newAge;
             if (fixedAnchor != null) fixedAnchor.transform.localScale = Vector3.one * newCameraScale;
         }
