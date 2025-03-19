@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -77,14 +78,64 @@ public class PlayerController : MonoBehaviour
     {
         float currentAge = getAge();
         float maxAge = 1.2f;
-        if (currentAge >= maxAge) {
+        if (currentAge >= maxAge)
+        {
+            // Si on est déjà à la taille maximale, on fixe la scale de Ted et de la caméra
             transform.localScale = Vector3.one * maxAge;
-        } else {
-            float newAge = currentAge + 0.1f;
-            transform.localScale = Vector3.one * newAge;
-            // La cam dezoom moins vite que Ted grandit, ça donne une meilleure impression de taille.
-            float newCameraScale = 2.2f - newAge;
-            if (fixedAnchor != null) fixedAnchor.transform.localScale = Vector3.one * newCameraScale;
+            if (fixedAnchor != null)
+                fixedAnchor.transform.localScale = Vector3.one * 1.0f;
+        }
+        else
+        {
+            // Transition progressive
+            StartCoroutine(GrowTransition());
         }
     }
+
+    private IEnumerator GrowTransition()
+    {
+        float duration = 0.5f; // durée de la transition en secondes
+        float timer = 0f;
+
+        // Valeurs initiales
+        float currentAge = getAge();
+        Vector3 initialTedScale = transform.localScale;
+
+        // Calcul de la nouvelle taille de Ted après consommation d'une baie (+0.1)
+        float newAge = currentAge + 0.1f;
+        Vector3 targetTedScale = Vector3.one * newAge;
+
+        // Paramètres pour le calcul du dezoom de la caméra :
+        // Ted grandit de 0.4 à 1.2 (intervalle de progression)
+        float initialAge = 0.4f;
+        float maxAge = 1.2f;
+        // t varie de 0 (à 0.4) à 1 (à 1.2)
+        float t_target = (newAge - initialAge) / (maxAge - initialAge);
+        // Interpolation logarithmique
+        float a = 4.0f; // Trial & error sur le paramètre de courbure, ça passe bien avec 4 ¯\_(o.o)_/¯
+        float startCamera = 2.2f;
+        float endCamera = 1.0f;
+        float targetCameraScaleValue = startCamera + (endCamera - startCamera) * (Mathf.Log(1 + a * t_target) / Mathf.Log(1 + a));
+        Vector3 targetCameraScale = Vector3.one * targetCameraScaleValue;
+
+        Vector3 initialCameraScale = fixedAnchor != null ? fixedAnchor.transform.localScale : Vector3.one;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float progress = Mathf.Clamp01(timer / duration);
+            // Interpolation linéaire pour Ted
+            transform.localScale = Vector3.Lerp(initialTedScale, targetTedScale, progress);
+            // Interpolation linéaire pour la caméra (avec le calcul logarithmique déjà appliqué au target)
+            if (fixedAnchor != null)
+                fixedAnchor.transform.localScale = Vector3.Lerp(initialCameraScale, targetCameraScale, progress);
+            yield return null;
+        }
+
+        // Valeurs finales
+        transform.localScale = targetTedScale;
+        if (fixedAnchor != null)
+            fixedAnchor.transform.localScale = targetCameraScale;
+    }
+
 }
