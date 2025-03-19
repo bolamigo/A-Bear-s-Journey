@@ -49,6 +49,10 @@ public class BerryBush : Resource
             // Incrémente le compteur de baies via le GameManager
             GameManager.Instance.CollectBerry();
 
+            // Ted grandit
+            PlayerController playerController = other.GetComponent<PlayerController>();
+            playerController?.grow();
+
             // Désactiver le marker tant que le buisson n'a pas repoussé
             if (mapMarkerInstance != null)
                 mapMarkerInstance.SetActive(false);
