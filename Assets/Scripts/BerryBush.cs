@@ -5,23 +5,58 @@ using static Enums;
 public class BerryBush : Resource
 {
     [SerializeField] private float respawnDelay = 10f;
+    // Référence au prefab du marker de la baie à afficher sur la map
+    [SerializeField] private GameObject mapMarkerPrefab;
+    // Instance du marker instancié
+    private GameObject mapMarkerInstance;
+    // Hauteur fixe pour l'affichage sur la map (comme dans FollowActorOnMap)
+    private const float BerriesHeightOnMap = 125f;
+
+    private void Start()
+    {
+        if (mapMarkerPrefab != null)
+        {
+            mapMarkerInstance = Instantiate(mapMarkerPrefab, GetMapPosition(), Quaternion.identity);
+            mapMarkerInstance.transform.SetParent(GameObject.Find("Berries").transform);
+
+            FollowBerryOnMap followScript = mapMarkerInstance.GetComponent<FollowBerryOnMap>();
+
+            // Pour éviter les erreurs de FollowActorOnMap
+            if (followScript != null)
+                followScript.setActor(transform);
+        }
+    }
+
+    private Vector3 GetMapPosition()
+    {
+        // Position du buisson sur la map
+        return new Vector3(transform.position.x, BerriesHeightOnMap, transform.position.z);
+    }
+
+    private void Update()
+    {
+        // Met à jour la position du marker pour suivre le buisson
+        if (mapMarkerInstance != null)
+        {
+            mapMarkerInstance.transform.position = GetMapPosition();
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") &&
-            gameObject.GetComponent<Renderer>().enabled)
+        if (other.CompareTag("Player") && GetComponent<Renderer>().enabled)
         {
             // Incrémente le compteur de baies via le GameManager
             GameManager.Instance.CollectBerry();
 
-            // Ted grandit
-            PlayerController playerController = other.GetComponent<PlayerController>();
-            playerController?.grow();
+            // Désactiver le marker tant que le buisson n'a pas repoussé
+            if (mapMarkerInstance != null)
+                mapMarkerInstance.SetActive(false);
 
-            // Rend le buisson invisible pour simuler la récolte
-            gameObject.GetComponent<Renderer>().enabled = false;
+            // Buisson invisible pour simuler la récolte
+            GetComponent<Renderer>().enabled = false;
 
-            // Lance la coroutine pour réactiver le buisson après le délai
+            // Lance la coroutine pour réactiver le buisson (et son marker) après le délai
             StartCoroutine(RespawnCoroutine());
         }
     }
@@ -29,6 +64,8 @@ public class BerryBush : Resource
     private IEnumerator RespawnCoroutine()
     {
         yield return new WaitForSeconds(respawnDelay);
-        gameObject.GetComponent<Renderer>().enabled = true;
+        GetComponent<Renderer>().enabled = true;
+        if (mapMarkerInstance != null)
+            mapMarkerInstance.SetActive(true);
     }
 }
