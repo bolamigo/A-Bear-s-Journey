@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
         return new Vector3(vec.x,0.0f,vec.z);
     }
 
-    private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Query-based naming
+    private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Querty-based naming
     [SerializeField] private GameObject mapCamera;
     private bool isMapActive = false;
 
