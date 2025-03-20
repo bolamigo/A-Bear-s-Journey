@@ -47,7 +47,7 @@ public class BerryIndicator : MonoBehaviour
             BerryIndicatorImage.gameObject.SetActive(true);
 
             Vector3 direction3D = nearestBush.transform.position - player.position;
-            direction3D.y = 0; // La map est plate
+            // La map est plate, pas besoin de y
             Vector2 direction = new Vector2(direction3D.x, direction3D.z).normalized;
 
             // Rotation de 90° pour que l'indicateur pointe vers le haut (avant) par défaut.
