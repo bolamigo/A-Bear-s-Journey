@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using static Enums;
+using System.Collections.Generic;
 
 public class BerryBush : Resource
 {
+    public static List<BerryBush> AllBerryBushes = new List<BerryBush>();
+
     [SerializeField] private float respawnDelay = 10f;
     // Référence au prefab du marker de la baie à afficher sur la map
     [SerializeField] private GameObject mapMarkerPrefab;
@@ -24,6 +27,9 @@ public class BerryBush : Resource
             // Pour éviter les erreurs de FollowActorOnMap
             if (followScript != null)
                 followScript.setActor(transform);
+
+            if (!AllBerryBushes.Contains(this))
+                AllBerryBushes.Add(this);
         }
     }
 
@@ -31,15 +37,6 @@ public class BerryBush : Resource
     {
         // Position du buisson sur la map
         return new Vector3(transform.position.x, BerriesHeightOnMap, transform.position.z);
-    }
-
-    private void Update()
-    {
-        // Met à jour la position du marker pour suivre le buisson
-        if (mapMarkerInstance != null)
-        {
-            mapMarkerInstance.transform.position = GetMapPosition();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -60,6 +57,8 @@ public class BerryBush : Resource
             // Buisson invisible pour simuler la récolte
             GetComponent<Renderer>().enabled = false;
 
+            AllBerryBushes.Remove(this);
+
             // Lance la coroutine pour réactiver le buisson (et son marker) après le délai
             StartCoroutine(RespawnCoroutine());
         }
@@ -70,6 +69,11 @@ public class BerryBush : Resource
         yield return new WaitForSeconds(respawnDelay);
         GetComponent<Renderer>().enabled = true;
         if (mapMarkerInstance != null)
+        {
             mapMarkerInstance.SetActive(true);
+
+            if (!AllBerryBushes.Contains(this))
+                AllBerryBushes.Add(this);
+        }
     }
 }
