@@ -79137,6 +79137,7 @@ MonoBehaviour:
   cam: {fileID: 1844599872}
   mapCamera: {fileID: 172734843}
   fixedAnchor: {fileID: 1867257876}
+  minimap: {fileID: 2021113745}
 --- !u!4 &1818304421 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7292658344771522932, guid: f5b41ba4c79702547a89de7544b80656, type: 3}

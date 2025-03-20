@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private bool isMapActive = false;
 
     [SerializeField] private Transform fixedAnchor;
+    [SerializeField] private GameObject minimap;
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +35,10 @@ public class PlayerController : MonoBehaviour
         {
             isMapActive = !isMapActive;
             if (mapCamera != null)
+            {
                 mapCamera.SetActive(isMapActive);
+                minimap.SetActive(!isMapActive);
+            }
         }
     }
 
