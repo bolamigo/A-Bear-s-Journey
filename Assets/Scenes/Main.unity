@@ -11560,6 +11560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1818304421}
   BerryIndicatorImage: {fileID: 1795156816}
+  minDistanceThreshold: 8
 --- !u!1001 &280391689
 PrefabInstance:
   m_ObjectHideFlags: 0

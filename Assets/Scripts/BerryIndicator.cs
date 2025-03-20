@@ -5,11 +5,13 @@ public class BerryIndicator : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private RectTransform BerryIndicatorImage;
 
+    // Seuils pour la distance qui influencent la taille de l'indicateur
+    [SerializeField] private float minDistanceThreshold = 8f;
+
     void Start()
     {
+        // Pivot en bas au centre (base de l'image type flèche)
         BerryIndicatorImage.pivot = new Vector2(0.5f, 0f);
-        // Image centrée sur le Canvas
-        BerryIndicatorImage.anchoredPosition = Vector2.zero;
     }
 
     void Update()
@@ -20,8 +22,6 @@ public class BerryIndicator : MonoBehaviour
             BerryIndicatorImage.gameObject.SetActive(false);
             return;
         }
-        else
-            BerryIndicatorImage.gameObject.SetActive(true);
 
         // Recherche du buisson le plus proche
         BerryBush nearestBush = null;
@@ -38,6 +38,14 @@ public class BerryIndicator : MonoBehaviour
 
         if (nearestBush != null)
         {
+            // Indicateur utile seulement si les baies sont assez loin
+            if (minDistance < minDistanceThreshold)
+            {
+                BerryIndicatorImage.gameObject.SetActive(false);
+                return;
+            }
+            BerryIndicatorImage.gameObject.SetActive(true);
+
             Vector3 direction3D = nearestBush.transform.position - player.position;
             direction3D.y = 0; // La map est plate
             Vector2 direction = new Vector2(direction3D.x, direction3D.z).normalized;
@@ -59,7 +67,7 @@ public class BerryIndicator : MonoBehaviour
 
             // Décalage de la base de l'indicateur, pour qu'il parte du centre
             Vector2 position = direction90 * (radius / 2f + 64f);
-            // Correction pour prendre en compte la largeur de l'image
+            // Correction pour prendre en compte la largeur (hauteur) de l'image
             position += direction * BerryIndicatorImage.rect.height / 2;
 
             BerryIndicatorImage.anchoredPosition = position;
