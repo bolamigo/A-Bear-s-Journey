@@ -1,0 +1,21 @@
+- Après 3 secondes sans déplacement, Ted s'assoit (il y a déjà une animation "sit")
+- La zone Plains semble très vide en jeu, si le sol n'était pas si low-poly, avec de l'herbe par exemple et/ou plus de fleurs (une zone de champs ?), ça pourrait être mieux
+- Le jeu manque globalement de mouvement et de vie
+	- Les moutons et chèvres :
+		- Animations déjà prêtes (voir le script exemple que j'avais écrit : Goat&SheepAnimationController)
+		- Je les ai placés de manière à ce que l'animation manger colle bien avec l'herbe
+	- Il faudrait ajouter d'autres animaux
+		- écureuils
+		- lapins
+		- vaches
+		- étang du village
+			- grenouilles
+			- poissons
+			- deuxième cours d'eau dans les plaines ?
+		- humains ?
+	- Intéractions entre Ted et les animaux
+		- Flee = animation run et éloignement par rapport à Ted (déplacement dans la direction Ted->animal)
+		- Freeze = animation idle ou "feindre la mort" (animation de mort)
+		- Fight:
+			- animation run, déplacement vers Ted
+			- Lancement de combat (système de combat, compétences ?)
