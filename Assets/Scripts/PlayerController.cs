@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private bool isMapActive = false;
 
     [SerializeField] private Transform fixedAnchor;
-    [SerializeField] private GameObject minimap;
+    [SerializeField] private GameObject canvas;
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
             if (mapCamera != null)
             {
                 mapCamera.SetActive(isMapActive);
-                minimap.SetActive(!isMapActive);
+                canvas.SetActive(!isMapActive);
             }
         }
     }

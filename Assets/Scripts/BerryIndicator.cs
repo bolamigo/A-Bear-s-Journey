@@ -5,9 +5,16 @@ public class BerryIndicator : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private RectTransform BerryIndicatorImage;
 
+    void Start()
+    {
+        BerryIndicatorImage.pivot = new Vector2(0.5f, 0f);
+        // Image centrée sur le Canvas
+        BerryIndicatorImage.anchoredPosition = Vector2.zero;
+    }
+
     void Update()
     {
-        // Si aucun buisson n'est enregistré, on désactive l'indicateur
+        // Aucun buisson, pas besoin d'indicateur
         if (BerryBush.AllBerryBushes.Count == 0)
         {
             BerryIndicatorImage.gameObject.SetActive(false);
@@ -31,13 +38,31 @@ public class BerryIndicator : MonoBehaviour
 
         if (nearestBush != null)
         {
-            Vector3 direction = nearestBush.transform.position - player.position;
-            direction.y = 0; // osef de l'altitude, la map est plate
+            Vector3 direction3D = nearestBush.transform.position - player.position;
+            direction3D.y = 0; // La map est plate
+            Vector2 direction = new Vector2(direction3D.x, direction3D.z).normalized;
 
-            float angle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+            // Rotation de 90° pour que l'indicateur pointe vers le haut (avant) par défaut.
+            Vector2 direction90 = new Vector2(-direction.y, direction.x);
 
-            // +90° pour que l'indicateur pointe vers le haut (avant) par défaut
-            BerryIndicatorImage.rotation = Quaternion.Euler(0, 0, angle + 90);
+            float angle = Mathf.Atan2(direction90.y, direction90.x) * Mathf.Rad2Deg;
+
+            BerryIndicatorImage.rotation = Quaternion.Euler(0, 0, angle);
+
+            Canvas canvas = BerryIndicatorImage.GetComponentInParent<Canvas>();
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+
+            // Origine : centre du canvas
+            float halfWidth = canvasRect.rect.width / 2f;
+            float halfHeight = canvasRect.rect.height / 2f;
+            float radius = Mathf.Min(halfWidth, halfHeight);
+
+            // Décalage de la base de l'indicateur, pour qu'il parte du centre
+            Vector2 position = direction90 * (radius / 2f + 64f);
+            // Correction pour prendre en compte la largeur de l'image
+            position += direction * BerryIndicatorImage.rect.height / 2;
+
+            BerryIndicatorImage.anchoredPosition = position;
         }
     }
 }
