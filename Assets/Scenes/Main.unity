@@ -11560,6 +11560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1818304421}
   BerryIndicatorImage: {fileID: 1795156816}
+  margin: 50
 --- !u!1001 &280391689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78323,7 +78324,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1795156816
 RectTransform:
   m_ObjectHideFlags: 0
