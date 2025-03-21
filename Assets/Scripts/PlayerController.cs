@@ -1,10 +1,10 @@
 using System.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 3;
     private Vector3 currentPosition;
     private Vector3 targetPosition;
     [SerializeField] private Camera cam;
@@ -40,18 +40,21 @@ public class PlayerController : MonoBehaviour
                 canvas.SetActive(!isMapActive);
             }
         }
+        Debug.Log(targetPosition);
     }
 
     void FixedUpdate(){
+        Debug.Log(targetPosition);
         if (isMapActive) return;
-        CharacterController characterController = GetComponent<CharacterController>();
         Animator bearAnimator = GetComponent<Animator>();
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
         currentPosition = transform.position;
         if(Input.GetMouseButton(0)){
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit)) {
                 targetPosition = hit.point;
+                agent.destination = targetPosition;
             }
         }
         Vector3 horizontal_target = new(targetPosition.x,transform.position.y,targetPosition.z);
@@ -61,12 +64,12 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit ground_hit))
 
         { 
-            transform.LookAt(horizontal_target, ground_hit.normal);
+            //transform.LookAt(horizontal_target, ground_hit.normal);
         }
-        if(Vector3.Distance(horizontal(currentPosition),horizontal(targetPosition))>1){
+        if(agent.remainingDistance>1){
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
-            characterController.SimpleMove(Vector3.Normalize(targetPosition-currentPosition) * speed);
+            //characterController.SimpleMove(Vector3.Normalize(targetPosition-currentPosition) * speed);
         }
         else{
             bearAnimator.SetBool(Run, false);
@@ -84,7 +87,7 @@ public class PlayerController : MonoBehaviour
         float maxAge = 1.2f;
         if (currentAge >= maxAge)
         {
-            // Si on est déjà à la taille maximale, on fixe la scale de Ted et de la caméra
+            // Si on est dï¿½jï¿½ ï¿½ la taille maximale, on fixe la scale de Ted et de la camï¿½ra
             transform.localScale = Vector3.one * maxAge;
             if (fixedAnchor != null)
                 fixedAnchor.transform.localScale = Vector3.one * 1.0f;
@@ -98,25 +101,25 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator GrowTransition()
     {
-        float duration = 0.5f; // durée de la transition en secondes
+        float duration = 0.5f; // durï¿½e de la transition en secondes
         float timer = 0f;
 
         // Valeurs initiales
         float currentAge = getAge();
         Vector3 initialTedScale = transform.localScale;
 
-        // Calcul de la nouvelle taille de Ted après consommation d'une baie (+0.1)
+        // Calcul de la nouvelle taille de Ted aprï¿½s consommation d'une baie (+0.1)
         float newAge = currentAge + 0.1f;
         Vector3 targetTedScale = Vector3.one * newAge;
 
-        // Paramètres pour le calcul du dezoom de la caméra :
-        // Ted grandit de 0.4 à 1.2 (intervalle de progression)
+        // Paramï¿½tres pour le calcul du dezoom de la camï¿½ra :
+        // Ted grandit de 0.4 ï¿½ 1.2 (intervalle de progression)
         float initialAge = 0.4f;
         float maxAge = 1.2f;
-        // t varie de 0 (à 0.4) à 1 (à 1.2)
+        // t varie de 0 (ï¿½ 0.4) ï¿½ 1 (ï¿½ 1.2)
         float t_target = (newAge - initialAge) / (maxAge - initialAge);
         // Interpolation logarithmique
-        float a = 4.0f; // Trial & error sur le paramètre de courbure, ça passe bien avec 4 ¯\_(o.o)_/¯
+        float a = 4.0f; // Trial & error sur le paramï¿½tre de courbure, ï¿½a passe bien avec 4 ï¿½\_(o.o)_/ï¿½
         float startCamera = 2.2f;
         float endCamera = 1.0f;
         float targetCameraScaleValue = startCamera + (endCamera - startCamera) * (Mathf.Log(1 + a * t_target) / Mathf.Log(1 + a));
@@ -128,9 +131,9 @@ public class PlayerController : MonoBehaviour
         {
             timer += Time.deltaTime;
             float progress = Mathf.Clamp01(timer / duration);
-            // Interpolation linéaire pour Ted
+            // Interpolation linï¿½aire pour Ted
             transform.localScale = Vector3.Lerp(initialTedScale, targetTedScale, progress);
-            // Interpolation linéaire pour la caméra (avec le calcul logarithmique déjà appliqué au target)
+            // Interpolation linï¿½aire pour la camï¿½ra (avec le calcul logarithmique dï¿½jï¿½ appliquï¿½ au target)
             if (fixedAnchor != null)
                 fixedAnchor.transform.localScale = Vector3.Lerp(initialCameraScale, targetCameraScale, progress);
             yield return null;
