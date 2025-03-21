@@ -19,3 +19,7 @@
 		- Fight:
 			- animation run, déplacement vers Ted
 			- Lancement de combat (système de combat, compétences ?)
+- Ted doit nager quand il passe dans l'eau
+	- Animation de nage inexistante => Animation de course légèrement plus rapide et légère inclinaison en arrière
+	- Trigger box là où il y a de l'eau
+	- L'animation ne doit pas s'arrêter, même si Ted s'arrête
