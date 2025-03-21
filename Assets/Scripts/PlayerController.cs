@@ -40,11 +40,9 @@ public class PlayerController : MonoBehaviour
                 canvas.SetActive(!isMapActive);
             }
         }
-        Debug.Log(targetPosition);
     }
 
     void FixedUpdate(){
-        Debug.Log(targetPosition);
         if (isMapActive) return;
         Animator bearAnimator = GetComponent<Animator>();
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
