@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8981439427542353992}
   - component: {fileID: 1782811966895174651}
   - component: {fileID: 1962927329406646502}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 820258257950080405}
   - component: {fileID: 3448899763005438374}
   - component: {fileID: 3243187269917053123}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 7533516864584997809}
   - component: {fileID: 7795040206318992952}
   - component: {fileID: 30685071878495494}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 9082488351210102023}
   - component: {fileID: 7315452526362845944}
   - component: {fileID: 8133923593559048983}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -437,7 +437,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8616719808018971163}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Borders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
