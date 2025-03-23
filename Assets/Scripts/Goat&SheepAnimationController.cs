@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Ursaanimation.CubicFarmAnimals
 {
     public class AnimationController : MonoBehaviour
     {
         public Animator animator;
+        public NavMeshAgent agent;
+
         public string walkForwardAnimation = "walk_forward";
         public string walkBackwardAnimation = "walk_backwards";
         public string turn90LAnimation = "turn_90_L";
@@ -20,64 +23,89 @@ namespace Ursaanimation.CubicFarmAnimals
         public string hitReactionAnimation = "hit_reaction";
         public string deathAnimation = "die";
 
+        private float idleTime;
+        private float idleTimer;
+        private bool isIdle = false;
+
+        private float minIdleTime = 3f; // Min time to stay idle
+        private float maxIdleTime = 10f; // Max time to stay idle
+        private float minMoveTime = 3f; // Min time to move
+        private float maxMoveTime = 10f; // Max time to move
+
+        private float minDistance = 5f; // Minimum distance to target point
+        private float maxDistance = 20f; // Maximum distance for random movement
+
+        private Vector3 targetPosition;
+
         void Start()
         {
             animator = GetComponent<Animator>();
+            agent = GetComponent<NavMeshAgent>();
+
+            MoveToRandomPosition(); // moving to random position
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (isIdle)
             {
-                animator.Play(walkForwardAnimation);
+                idleTimer += Time.deltaTime;
+                if (idleTimer >= idleTime)
+                {
+                    isIdle = false;
+                    MoveToRandomPosition(); 
+                }
+                else
+                {
+                    // eating animation
+                    animator.Play(eatingAnimation);
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else
             {
-                animator.Play(walkBackwardAnimation);
+                // the target is reached
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    isIdle = true;
+                    idleTime = Random.Range(minIdleTime, maxIdleTime); // Set random idle time
+                    idleTimer = 0f; // Reset idle timer
+                }
+
+                // walking animation if moving
+                if (agent.velocity.magnitude > 0)
+                {
+                    animator.Play(walkForwardAnimation);
+                }
+                else
+                {
+                    // idle animation
+                    animator.Play(eatingAnimation);
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.A))
+        }
+
+        private void MoveToRandomPosition()
+        {
+            // random target position within a specified radius
+            Vector3 randomDirection = Random.insideUnitSphere * Random.Range(minDistance, maxDistance);
+            randomDirection += transform.position;
+
+            // target position is on the NavMesh
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomDirection, out hit, maxDistance, NavMesh.AllAreas))
             {
-                animator.Play(turn90LAnimation);
+                targetPosition = hit.position;
+                agent.SetDestination(targetPosition);
             }
-            else if (Input.GetKeyDown(KeyCode.D))
+
+            // run instead of walk
+            if (Random.value > 0.5f)
             {
-                animator.Play(turn90RAnimation);
+                agent.speed = 3.5f; 
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            else
             {
-                animator.Play(runForwardAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                animator.Play(trotAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                animator.Play(standtositAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                animator.Play(sittostandAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                animator.Play(shuffleRAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                animator.Play(eatingAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha7))
-            {
-                animator.Play(attackAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                animator.Play(hitReactionAnimation);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha9))
-            {
-                animator.Play(deathAnimation);
+                agent.speed = 1.5f; 
             }
         }
     }
