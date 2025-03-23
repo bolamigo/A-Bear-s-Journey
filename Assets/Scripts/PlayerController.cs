@@ -10,10 +10,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera cam;
     private static readonly int Run = Animator.StringToHash("Run Forward");
     private static readonly int Idle = Animator.StringToHash("Idle");
-    static Vector3 horizontal(Vector3 vec){
-        return new Vector3(vec.x,0.0f,vec.z);
-    }
-
     private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Querty-based naming
     [SerializeField] private GameObject mapCamera;
     private bool isMapActive = false;
@@ -51,23 +47,12 @@ public class PlayerController : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit)) {
-                targetPosition = hit.point;
-                agent.destination = targetPosition;
+                agent.destination = hit.point;
             }
-        }
-        Vector3 horizontal_target = new(targetPosition.x,transform.position.y,targetPosition.z);
-
-        // Does the ray intersect any objects excluding the player layer
-        Vector3 forward = Vector3.Normalize(targetPosition - transform.position);
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit ground_hit))
-
-        { 
-            //transform.LookAt(horizontal_target, ground_hit.normal);
         }
         if(agent.remainingDistance>1){
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
-            //characterController.SimpleMove(Vector3.Normalize(targetPosition-currentPosition) * speed);
         }
         else{
             bearAnimator.SetBool(Run, false);
