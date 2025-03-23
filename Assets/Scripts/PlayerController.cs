@@ -50,6 +50,9 @@ public class PlayerController : MonoBehaviour
                 agent.destination = hit.point;
             }
         }
+        if(Input.GetMouseButton(2)){
+            
+        }
         if(agent.remainingDistance>1){
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
