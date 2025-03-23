@@ -67,8 +67,8 @@ namespace Ursaanimation.CubicFarmAnimals
                 if (agent.remainingDistance <= agent.stoppingDistance)
                 {
                     isIdle = true;
-                    idleTime = Random.Range(minIdleTime, maxIdleTime); // Set random idle time
-                    idleTimer = 0f; // Reset idle timer
+                    idleTime = Random.Range(minIdleTime, maxIdleTime); // random idle time
+                    idleTimer = 0f; 
                 }
 
                 // walking animation if moving
