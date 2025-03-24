@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera cam;
     private static readonly int Run = Animator.StringToHash("Run Forward");
     private static readonly int Idle = Animator.StringToHash("Idle");
+    private static readonly int Attack = Animator.StringToHash("Attack2");
     private const UnityEngine.KeyCode M_KEY = KeyCode.Semicolon; // Querty-based naming
     [SerializeField] private GameObject mapCamera;
     private bool isMapActive = false;
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isMapActive) return;
 
+        if(!agent.enabled)return;
         if (isSwimming)
         {
             // Mode nage : animation run en continu, vitesse réduite et légère inclinaison en arrière.
@@ -91,8 +93,18 @@ public class PlayerController : MonoBehaviour
                 agent.destination = hit.point;
             }
         }
-        if(Input.GetMouseButton(1)){
-            agent.velocity = new Vector3(10,0,0);
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 3, Color.red); 
+        if(Input.GetMouseButtonDown(1)){
+            bearAnimator.SetTrigger(Attack);
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 3))
+            { 
+                LivingAnimal livingAnimal = hit.collider.gameObject.GetComponent<LivingAnimal>();
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 50, Color.yellow); 
+                if(livingAnimal != null){
+                    livingAnimal.Damage(this.gameObject,5);
+                }
+            }
         }
     }
 

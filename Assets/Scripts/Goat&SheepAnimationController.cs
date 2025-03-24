@@ -45,8 +45,9 @@ namespace Ursaanimation.CubicFarmAnimals
             MoveToRandomPosition(); // moving to random position
         }
 
-        void Update()
+        void FixedUpdate()
         {
+            if(!agent.enabled)return;
             if (isIdle)
             {
                 idleTimer += Time.deltaTime;

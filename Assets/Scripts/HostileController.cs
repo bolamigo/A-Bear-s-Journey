@@ -45,8 +45,9 @@ public class HostileController : MonoBehaviour
         MoveToRandomPosition(); // moving to random position
     }
 
-    void Update()
+    void FixedUpdate()
     {
+        if(!agent.enabled)return;
         if(Vector3.Distance(transform.position,player.transform.position)<10){
             isIdle = false;
             Attack();
@@ -121,11 +122,10 @@ public class HostileController : MonoBehaviour
     {
         // random target position within a specified radius
         agent.SetDestination(player.transform.position);
-        agent.speed = 5.5f; 
+        agent.speed = 5.5f;
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Hit");
         animator.Play(attackAnimation);
         if(other.gameObject==player){
             player.GetComponent<LivingAnimal>().Damage(this.gameObject,2);

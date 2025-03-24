@@ -19,7 +19,16 @@ public class LivingAnimal : MonoBehaviour
         }
     }
     public void Damage(GameObject enemy,float damage){
-        GetComponent<NavMeshAgent>().velocity = Vector3.Normalize(transform.position-enemy.transform.position)*20;
+        NavMeshAgent navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent.enabled =false;
+        GetComponent<Rigidbody>().velocity = Vector3.Normalize(transform.position-enemy.transform.position)*10;
         health-=damage;
+        IEnumerator Waker()
+        {
+            yield return new WaitForSeconds(1f);// Wait for one second
+
+            navMeshAgent.enabled = true;
+        }
+        StartCoroutine(Waker());
     }
 }
