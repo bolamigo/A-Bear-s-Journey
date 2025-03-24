@@ -1,76 +1,98 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
-public class BerryIndicator : MonoBehaviour
+public class BerryIndicatorManager : MonoBehaviour
 {
     [SerializeField] private Transform player;
-    [SerializeField] private RectTransform BerryIndicatorImage;
+    // Prefab de l'indicateur (contenant un RectTransform et une Image)
+    [SerializeField] private RectTransform indicatorPrefab;
 
-    // Seuils pour la distance qui influencent la taille de l'indicateur
-    [SerializeField] private float minDistanceThreshold = 8f;
+    // Seuils de distance
+    [SerializeField] private float minDistanceThreshold = 4f;
+    [SerializeField] private float maxDistanceThreshold = 32f;
 
-    void Start()
-    {
-        // Pivot en bas au centre (base de l'image type flèche)
-        BerryIndicatorImage.pivot = new Vector2(0.5f, 0f);
-    }
+    // Gestionnaire interne des indicateurs : chaque buisson aura son indicateur
+    private Dictionary<BerryBush, RectTransform> indicators = new Dictionary<BerryBush, RectTransform>();
 
     void Update()
     {
-        // Aucun buisson, pas besoin d'indicateur
-        if (BerryBush.AllBerryBushes.Count == 0)
-        {
-            BerryIndicatorImage.gameObject.SetActive(false);
-            return;
-        }
-
-        // Recherche du buisson le plus proche
-        BerryBush nearestBush = null;
-        float minDistance = Mathf.Infinity;
+        // Parcours de tous les buissons enregistrés
         foreach (var bush in BerryBush.AllBerryBushes)
         {
             float dist = Vector3.Distance(player.position, bush.transform.position);
-            if (dist < minDistance)
+
+            // Si le buisson est trop proche (les baies sont visibles) ou trop éloigné (Ted ne sent pas), on retire l'indicateur
+            if (dist < minDistanceThreshold || dist > maxDistanceThreshold)
             {
-                minDistance = dist;
-                nearestBush = bush;
+                if (indicators.ContainsKey(bush))
+                {
+                    Destroy(indicators[bush].gameObject);
+                    indicators.Remove(bush);
+                }
+            }
+            else
+            {
+                // Si le buisson est à portée, on s'assure d'avoir un indicateur
+                RectTransform indicator;
+                if (!indicators.TryGetValue(bush, out indicator))
+                {
+                    indicator = Instantiate(indicatorPrefab, transform);
+                    // Le pivot est en bas au centre pour que la base de la flèche soit fixe
+                    indicator.pivot = new Vector2(0.5f, 0f);
+                    indicators.Add(bush, indicator);
+                }
+
+                // Calcul de la direction depuis le joueur vers le buisson (projection sur le plan XZ)
+                Vector3 direction3D = bush.transform.position - player.position;
+                direction3D.y = 0;
+                Vector2 direction = new Vector2(direction3D.x, direction3D.z).normalized;
+
+                // Rotation : on fait tourner la direction de 90° pour que l'image (si elle pointe par défaut vers le haut)
+                // indique correctement la direction du buisson.
+                Vector2 direction90 = new Vector2(-direction.y, direction.x);
+                float angle = Mathf.Atan2(direction90.y, direction90.x) * Mathf.Rad2Deg;
+                indicator.rotation = Quaternion.Euler(0, 0, angle);
+
+                // Positionnement de l'indicateur sur le Canvas :
+                // On place l'indicateur de façon à ce que sa base (pivot) soit décalée depuis le centre.
+                Canvas canvas = indicator.GetComponentInParent<Canvas>();
+                RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+                float halfWidth = canvasRect.rect.width / 2f;
+                float halfHeight = canvasRect.rect.height / 2f;
+                float radius = Mathf.Min(halfWidth, halfHeight);
+
+                // La position est calculée de manière similaire à vos tests,
+                // ici on déplace l'indicateur depuis le centre, en ajoutant un décalage fixe (ici 64f) et
+                // une correction pour la hauteur de l'image.
+                Vector2 pos = direction90 * (radius / 2f + 64f);
+                pos += direction * (indicator.rect.height / 2f);
+                indicator.anchoredPosition = pos;
+
+                // Calcul de l'opacité en fonction de la distance :
+                // Plus le buisson est proche (distance proche de minDistanceThreshold), plus l'indicateur est opaque.
+                float alpha = 1f - Mathf.InverseLerp(minDistanceThreshold, maxDistanceThreshold, dist);
+
+                // Appliquer l'opacité à l'image de l'indicateur
+                RawImage img = indicator.GetComponent<RawImage>();
+                if (img != null)
+                {
+                    Color c = img.color;
+                    c.a = alpha;
+                    img.color = c;
+                }
             }
         }
 
-        if (nearestBush != null)
+        // Nettoyage des indicateurs pour les buissons qui n'existent plus
+        List<BerryBush> keys = new List<BerryBush>(indicators.Keys);
+        foreach (var bush in keys)
         {
-            // Indicateur utile seulement si les baies sont assez loin
-            if (minDistance < minDistanceThreshold)
+            if (!BerryBush.AllBerryBushes.Contains(bush))
             {
-                BerryIndicatorImage.gameObject.SetActive(false);
-                return;
+                Destroy(indicators[bush].gameObject);
+                indicators.Remove(bush);
             }
-            BerryIndicatorImage.gameObject.SetActive(true);
-
-            Vector3 direction3D = nearestBush.transform.position - player.position;
-            // La map est plate, pas besoin de y
-            Vector2 direction = new Vector2(direction3D.x, direction3D.z).normalized;
-
-            // Rotation de 90° pour que l'indicateur pointe vers le haut (avant) par défaut.
-            Vector2 direction90 = new Vector2(-direction.y, direction.x);
-
-            float angle = Mathf.Atan2(direction90.y, direction90.x) * Mathf.Rad2Deg;
-
-            BerryIndicatorImage.rotation = Quaternion.Euler(0, 0, angle);
-
-            Canvas canvas = BerryIndicatorImage.GetComponentInParent<Canvas>();
-            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-
-            // Origine : centre du canvas
-            float halfWidth = canvasRect.rect.width / 2f;
-            float halfHeight = canvasRect.rect.height / 2f;
-            float radius = Mathf.Min(halfWidth, halfHeight);
-
-            // Décalage de la base de l'indicateur, pour qu'il parte du centre
-            Vector2 position = direction90 * (radius / 2f + 64f);
-            // Correction pour prendre en compte la largeur (hauteur) de l'image
-            position += direction * BerryIndicatorImage.rect.height / 2;
-
-            BerryIndicatorImage.anchoredPosition = position;
         }
     }
 }
