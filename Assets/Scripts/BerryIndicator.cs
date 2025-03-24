@@ -9,11 +9,9 @@ public class BerryIndicatorManager : MonoBehaviour
     [SerializeField] private RectTransform indicatorPrefab;
 
     // Seuils de distance
-    [SerializeField] private float minDistanceThreshold = 16f;
+    [SerializeField] private float minDistanceThreshold = 8f;
     [SerializeField] private float maxDistanceThreshold = 32f;
 
-
-    // Gestionnaire interne des indicateurs : chaque buisson aura son indicateur
     private Dictionary<BerryBush, RectTransform> indicators = new Dictionary<BerryBush, RectTransform>();
 
     void Update()
@@ -63,7 +61,6 @@ public class BerryIndicatorManager : MonoBehaviour
                 float halfHeight = canvasRect.rect.height / 2f;
                 float radius = Mathf.Min(halfWidth, halfHeight);
 
-                // La position est calculée de manière similaire à vos tests,
                 // ici on déplace l'indicateur depuis le centre, en ajoutant un décalage fixe
                 // et une correction pour la hauteur de l'image.
                 Vector2 pos = direction90 * (radius / 2f + 64f);
@@ -72,7 +69,11 @@ public class BerryIndicatorManager : MonoBehaviour
 
                 // Calcul de l'opacité en fonction de la distance :
                 // Plus le buisson est proche (distance proche de minDistanceThreshold), plus l'indicateur est opaque.
-                float alpha = 1f - Mathf.InverseLerp(minDistanceThreshold, maxDistanceThreshold, dist);
+                // Sauf si le buisson est plus proche que minDistanceThreshold, pour ne pas polluer l'écran
+                float alpha;
+                if (dist < minDistanceThreshold)
+                    alpha = 1f - Mathf.InverseLerp(minDistanceThreshold, 0f, dist);
+                else alpha = 1f - Mathf.InverseLerp(minDistanceThreshold, maxDistanceThreshold, dist);
 
                 // Appliquer l'opacité à l'image de l'indicateur
                 RawImage img = indicator.GetComponent<RawImage>();
@@ -82,16 +83,6 @@ public class BerryIndicatorManager : MonoBehaviour
                     c.a = alpha;
                     img.color = c;
                 }
-
-                // Ajustement de l'échelle : 
-                // Si la distance est inférieure à minDistanceThreshold, l'échelle est interpolée entre minIndicatorScale et 1.
-                // Pour une distance >= minDistanceThreshold, on utilise l'échelle 1.
-                float scaleFactor = 1f;
-                if (dist < minDistanceThreshold)
-                {
-                    scaleFactor = Mathf.Lerp(0.05f, 1f, dist / minDistanceThreshold);
-                }
-                indicator.localScale = Vector3.one * scaleFactor;
             }
         }
 
