@@ -47,7 +47,7 @@ public class HostileController : MonoBehaviour
 
     void Update()
     {
-        if(Vector3.Distance(transform.position,player.transform.position)<maxDistance){
+        if(Vector3.Distance(transform.position,player.transform.position)<10){
             isIdle = false;
             Attack();
             isAttacking = true;
