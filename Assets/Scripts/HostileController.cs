@@ -3,8 +3,8 @@ using UnityEngine.AI;
 
 public class HostileController : MonoBehaviour
 {
-    public Animator animator;
-    public NavMeshAgent agent;
+    Animator animator;
+    NavMeshAgent agent;
     public GameObject player;
 
     public string walkForwardAnimation = "walk_forward";
@@ -78,7 +78,11 @@ public class HostileController : MonoBehaviour
             }
 
             // walking animation if moving
-            if (agent.velocity.magnitude > 0)
+            if (agent.velocity.magnitude > 4)
+            {
+                animator.Play(runForwardAnimation);
+            }
+            else if (agent.velocity.magnitude > 3)
             {
                 animator.Play(walkForwardAnimation);
             }
@@ -121,7 +125,8 @@ public class HostileController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("trigger");
+        Debug.Log("Hit");
+        animator.Play(attackAnimation);
         if(other.gameObject==player){
             player.GetComponent<LivingAnimal>().Damage(this.gameObject,2);
         }

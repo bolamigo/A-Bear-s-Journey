@@ -5,8 +5,8 @@ namespace Ursaanimation.CubicFarmAnimals
 {
     public class AnimationController : MonoBehaviour
     {
-        public Animator animator;
-        public NavMeshAgent agent;
+        Animator animator;
+        NavMeshAgent agent;
 
         public string walkForwardAnimation = "walk_forward";
         public string walkBackwardAnimation = "walk_backwards";
