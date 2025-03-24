@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,5 +26,11 @@ public class GameManager : MonoBehaviour
     {
         berryCount++;
         Debug.Log("Berry eaten! Total : " + berryCount);
+    }
+
+    //loads the main game scene
+    public void LoadGameScene()
+    {
+        SceneManager.LoadScene("Main");  // it works because the scene was added in the biuld settings
     }
 }
