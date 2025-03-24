@@ -17,12 +17,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform fixedAnchor;
     [SerializeField] private GameObject canvas;
 
+    // Pour toggle l'animation de nage
+    public bool isSwimming { get; private set; } = false;
+
+    private NavMeshAgent agent;
+    private Animator bearAnimator;
+
     // Start is called before the first frame update
     void Start()
     {
         currentPosition = transform.position;
         targetPosition = currentPosition;
         transform.rotation = Quaternion.Euler(0,0,0);
+
+        agent = GetComponent<NavMeshAgent>();
+        bearAnimator = GetComponent<Animator>();
     }
 
     void Update()
@@ -38,10 +47,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate(){
+    void FixedUpdate()
+    {
         if (isMapActive) return;
-        Animator bearAnimator = GetComponent<Animator>();
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+
+        if (isSwimming)
+        {
+            // Mode nage : animation run en continu, vitesse réduite et légère inclinaison en arrière.
+            bearAnimator.SetBool(Run, true);
+            bearAnimator.SetBool(Idle, false);
+
+            Vector3 newEuler = transform.localEulerAngles;
+            newEuler.x = -15f;
+            transform.localEulerAngles = newEuler;
+
+            if (Input.GetMouseButton(0))
+            {
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                {
+                    agent.destination = hit.point;
+                }
+            }
+            return;
+        }
+
         currentPosition = transform.position;
         if(Input.GetMouseButton(0)){
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -62,6 +92,12 @@ public class PlayerController : MonoBehaviour
             bearAnimator.SetBool(Idle, true);
         }
     }
+
+    public void SetSwimming(bool swimming)
+    {
+        isSwimming = swimming;
+    }
+
     public float getAge()
     {
         return transform.localScale.x;
