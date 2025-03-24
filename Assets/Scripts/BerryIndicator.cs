@@ -9,8 +9,9 @@ public class BerryIndicatorManager : MonoBehaviour
     [SerializeField] private RectTransform indicatorPrefab;
 
     // Seuils de distance
-    [SerializeField] private float minDistanceThreshold = 4f;
+    [SerializeField] private float minDistanceThreshold = 16f;
     [SerializeField] private float maxDistanceThreshold = 32f;
+
 
     // Gestionnaire interne des indicateurs : chaque buisson aura son indicateur
     private Dictionary<BerryBush, RectTransform> indicators = new Dictionary<BerryBush, RectTransform>();
@@ -23,7 +24,7 @@ public class BerryIndicatorManager : MonoBehaviour
             float dist = Vector3.Distance(player.position, bush.transform.position);
 
             // Si le buisson est trop proche (les baies sont visibles) ou trop éloigné (Ted ne sent pas), on retire l'indicateur
-            if (dist < minDistanceThreshold || dist > maxDistanceThreshold)
+            if (dist > maxDistanceThreshold)
             {
                 if (indicators.ContainsKey(bush))
                 {
@@ -63,8 +64,8 @@ public class BerryIndicatorManager : MonoBehaviour
                 float radius = Mathf.Min(halfWidth, halfHeight);
 
                 // La position est calculée de manière similaire à vos tests,
-                // ici on déplace l'indicateur depuis le centre, en ajoutant un décalage fixe (ici 64f) et
-                // une correction pour la hauteur de l'image.
+                // ici on déplace l'indicateur depuis le centre, en ajoutant un décalage fixe
+                // et une correction pour la hauteur de l'image.
                 Vector2 pos = direction90 * (radius / 2f + 64f);
                 pos += direction * (indicator.rect.height / 2f);
                 indicator.anchoredPosition = pos;
@@ -81,6 +82,16 @@ public class BerryIndicatorManager : MonoBehaviour
                     c.a = alpha;
                     img.color = c;
                 }
+
+                // Ajustement de l'échelle : 
+                // Si la distance est inférieure à minDistanceThreshold, l'échelle est interpolée entre minIndicatorScale et 1.
+                // Pour une distance >= minDistanceThreshold, on utilise l'échelle 1.
+                float scaleFactor = 1f;
+                if (dist < minDistanceThreshold)
+                {
+                    scaleFactor = Mathf.Lerp(0.05f, 1f, dist / minDistanceThreshold);
+                }
+                indicator.localScale = Vector3.one * scaleFactor;
             }
         }
 
