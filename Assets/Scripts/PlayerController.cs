@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform fixedAnchor;
     [SerializeField] private GameObject canvas;
 
+    // Pour l'animation
+    [SerializeField] private Transform armature;
+
     // Pour toggle l'animation de nage
     public bool isSwimming { get; private set; } = false;
 
@@ -57,19 +60,27 @@ public class PlayerController : MonoBehaviour
             bearAnimator.SetBool(Run, true);
             bearAnimator.SetBool(Idle, false);
 
-            Vector3 newEuler = transform.localEulerAngles;
-            newEuler.x = -15f;
-            transform.localEulerAngles = newEuler;
-
-            if (Input.GetMouseButton(0))
+            Vector3 newEuler = armature.localEulerAngles;
+            newEuler.x = -30f;
+            armature.localEulerAngles = newEuler;
+        }
+        else
+        {
+            if (agent.remainingDistance > 1)
             {
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit))
-                {
-                    agent.destination = hit.point;
-                }
+                bearAnimator.SetBool(Run, true);
+                bearAnimator.SetBool(Idle, false);
             }
-            return;
+            else
+            {
+                bearAnimator.SetBool(Run, false);
+                bearAnimator.SetBool(Idle, true);
+            }
+
+            // Reset rotation
+            Vector3 newEuler = armature.localEulerAngles;
+            newEuler.x = 0f;
+            armature.localEulerAngles = newEuler;
         }
 
         currentPosition = transform.position;
@@ -82,14 +93,6 @@ public class PlayerController : MonoBehaviour
         }
         if(Input.GetMouseButton(1)){
             agent.velocity = new Vector3(10,0,0);
-        }
-        if(agent.remainingDistance>1){
-            bearAnimator.SetBool(Run, true);
-            bearAnimator.SetBool(Idle, false);
-        }
-        else{
-            bearAnimator.SetBool(Run, false);
-            bearAnimator.SetBool(Idle, true);
         }
     }
 

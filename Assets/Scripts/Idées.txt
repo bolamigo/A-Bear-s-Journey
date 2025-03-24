@@ -19,5 +19,3 @@
 		- Fight:
 			- animation run, déplacement vers Ted
 			- Lancement de combat (système de combat, compétences ?)
-- Ted doit nager quand il passe dans l'eau
-	- à fix : voir commit "wip: swimming animation"
