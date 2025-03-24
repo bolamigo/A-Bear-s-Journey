@@ -50,8 +50,8 @@ public class PlayerController : MonoBehaviour
                 agent.destination = hit.point;
             }
         }
-        if(Input.GetMouseButton(2)){
-            
+        if(Input.GetMouseButton(1)){
+            agent.velocity = new Vector3(10,0,0);
         }
         if(agent.remainingDistance>1){
             bearAnimator.SetBool(Run, true);
